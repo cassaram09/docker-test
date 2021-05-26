@@ -24,7 +24,7 @@ after_success:
 deploy:
   edge: true
   provider: elasticbeanstalk
-  region: us-east-2
+  region: us-east-1
   app: docker-test
   env: Dockertest-env
   bucket_name: elasticbeanstalk-us-east-1-951193947340
