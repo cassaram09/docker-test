@@ -1,0 +1,35 @@
+sudo: required
+language: generic
+
+services:
+  - docker
+
+#before_install:
+#  - docker build -t cassaram09/react-test -f ./client/Dockerfile.dev ./client
+
+#script:
+#  - docker run -e CI=true cassaram09/react-test npm test
+
+after_success:
+  - docker build -t cassaram09/docker-test-client ./client
+  - docker build -t cassaram09/docker-test-nginx ./nginx
+
+  #login to docker
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+
+  # push to docker hub
+  - docker push cassaram09/docker-test-client
+  - docker push cassaram09/docker-test-nginx
+
+deploy:
+  edge: true
+  provider: elasticbeanstalk
+  region: us-east-2
+  app: docker-test
+  env: Dockertest-env
+  bucket_name: elasticbeanstalk-us-east-1-951193947340
+  bucket_path: docker-test
+  on:
+    branch: master
+  access_key_id: $AWS_ACCESS_KEY
+  secret_access_key: $AWS_SECRET_KEY
